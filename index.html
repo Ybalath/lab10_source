@@ -12,10 +12,10 @@
     <ul>
         <li>Author Name: Paweł Czuchryta</li>
         <li>App Version: 1.0.0</li>
-        <li>Dockerfile: <code>
+        <li>Dockerfile: <br><code>
             FROM nginx:alpine <br>
             WORKDIR /usr/share/nginx/html <br>
-            COPY . . <br>
+            COPY ./index.html . <br>
             EXPOSE 80 <br>
             CMD ["nginx", "-g", "daemon off;"] <br>
         </code></li>
