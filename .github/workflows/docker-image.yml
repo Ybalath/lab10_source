@@ -67,13 +67,13 @@ jobs:
         with:
           repository: Ybalath/lab10_config
           token: ${{ secrets.ACTIONS_TOKEN }}
-          run: |
-            sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{env.APP_VERSION}}/g' lab10-deployment.yaml
-            git config user.name pawel-czuchryta
-            git config user.email pawel.czuchryta@pollub.edu.pl
-            git add .
-            git commit -m "updated app version ${{ env.APP_VERSION }}"
-            git push
+      - run: |
+          sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{env.APP_VERSION}}/g' lab10-deployment.yaml
+          git config user.name pawel-czuchryta
+          git config user.email pawel.czuchryta@pollub.edu.pl
+          git add -u
+          git commit -m "updated app version ${{ env.APP_VERSION }}"
+          git push
         
     
 
