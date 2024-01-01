@@ -62,7 +62,7 @@ jobs:
           repository: Ybalath/lab10_config
           token: ${{ secrets.ACTIONS_TOKEN }}
       - run: |
-          sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{ needs.appVersion.outputs.version_number }}/g' lab10-deployment.yaml
+          sed -i 's/ybalath\/lab10-app:.*/ybalath\/lab10-app:${{ needs.appVersion.outputs.version_number }}/g' lab10-deployment.yaml
           git config user.name pawel-czuchryta
           git config user.email pawel.czuchryta@pollub.edu.pl
           git add -u
