@@ -1,0 +1,79 @@
+name: Docker Image CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  APP_VERSION: "1.0.0"
+
+jobs:
+
+  appVersion:
+    runs-on: ubuntu-latest
+    outputs:
+      version_number: ${{ steps.vars.outputs.version_number }}
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v4
+      
+    - name: set-output
+      id: vars
+      run: |
+        version_number=$(sed -n 's/.*App Version: \(.*\)<\/li>/\1/p' index.html)
+        echo "version_number=${version_number}" >> "$GITHUB_OUTPUT"
+      shell: bash
+
+    - name: setup env variable
+      run: echo "env variable is $APP_VERSION"
+      env:  
+        APP_VERSION: ${{ steps.vars.outputs.version_number }}
+        
+  dockerCI:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repo
+      uses: actions/checkout@v4
+    
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_HUB_LOGIN }}
+        password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ybalath/lab10-app:${{ env.APP_VERSION }}
+        
+  kubernetesCI:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          repository: Ybalath/lab10_config
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          run: |
+            sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{env.APP_VERSION}}/g' lab10-deployment.yaml
+            git config user.name pawel-czuchryta
+            git config user.email pawel.czuchryta@pollub.edu.pl
+            git add .
+            git commit -m "updated app version ${{ env.APP_VERSION }}"
+            git push
+        
+    
+
