@@ -23,11 +23,6 @@ jobs:
         version_number=$(sed -n 's/.*App Version: \(.*\)<\/li>/\1/p' index.html)
         echo "version_number=${version_number}" >> "$GITHUB_OUTPUT"
       shell: bash
-
-    - name: setup env variable
-      run: echo "env variable is $APP_VERSION"
-      env:  
-        APP_VERSION: ${{ steps.vars.outputs.version_number }}
         
   dockerCI:
     needs: appVersion
