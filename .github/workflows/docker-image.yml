@@ -35,7 +35,7 @@ jobs:
 
     steps:
     - name: setup env variable
-      run: echo "env variable is $APP_VERSION"
+      run: echo "env variable is ${{env.app_version}}"
     - name: Check out the repo
       uses: actions/checkout@v4
     
