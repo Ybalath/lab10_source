@@ -23,14 +23,13 @@ jobs:
         version_number=$(sed -n 's/.*App Version: \(.*\)<\/li>/\1/p' index.html)
         echo "version_number=${version_number}" >> "$GITHUB_OUTPUT"
       shell: bash
+
         
   dockerCI:
     needs: appVersion
     runs-on: ubuntu-latest
 
     steps:
-    - name: setup env variable
-      run: echo "env variable is ${{needs.appVersion.outputs.version_number}}"
     - name: Check out the repo
       uses: actions/checkout@v4
     
@@ -57,15 +56,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: setup env variable
-        run: echo "env variable is $APP_VERSION"
       - name: Check out the repo
         uses: actions/checkout@v4
         with:
           repository: Ybalath/lab10_config
           token: ${{ secrets.ACTIONS_TOKEN }}
       - run: |
-          sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{needs.appVersion.outputs.version_number}}/g' lab10-deployment.yaml
+          sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{ needs.appVersion.outputs.version_number }}/g' lab10-deployment.yaml
           git config user.name pawel-czuchryta
           git config user.email pawel.czuchryta@pollub.edu.pl
           git add -u
