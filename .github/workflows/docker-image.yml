@@ -35,7 +35,7 @@ jobs:
 
     steps:
     - name: setup env variable
-      run: echo "env variable is ${{env.app_version}}"
+      run: echo "env variable is ${{needs.appVersion.outputs.version_number}}"
     - name: Check out the repo
       uses: actions/checkout@v4
     
@@ -55,7 +55,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ybalath/lab10-app:${{ env.APP_VERSION }}
+        tags: ybalath/lab10-app:${{ needs.appVersion.outputs.version_number}}
         
   kubernetesCI:
     needs: [appVersion, dockerCI]
@@ -70,11 +70,11 @@ jobs:
           repository: Ybalath/lab10_config
           token: ${{ secrets.ACTIONS_TOKEN }}
       - run: |
-          sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{env.APP_VERSION}}/g' lab10-deployment.yaml
+          sed -i 's/ybalath\/lab10-app:1.0.0/ybalath\/lab10-app:${{needs.appVersion.outputs.version_number}}/g' lab10-deployment.yaml
           git config user.name pawel-czuchryta
           git config user.email pawel.czuchryta@pollub.edu.pl
           git add -u
-          git commit -m "updated app version ${{ env.APP_VERSION }}"
+          git commit -m "updated app version ${{ needs.appVersion.outputs.version_number }}"
           git push
         
     
